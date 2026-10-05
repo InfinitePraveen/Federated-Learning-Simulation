@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Federated Learning Simulation</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0b1020;
+            --card: rgba(255,255,255,.07);
+            --border: rgba(255,255,255,.12);
+            --text: #eef2ff;
+            --muted: #a8b1c7;
+            --accent: #7dd3fc;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Inter, Segoe UI, Arial, sans-serif;
+            background: radial-gradient(circle at top, #18213e, var(--bg) 55%);
+            color: var(--text);
+        }
+        main { max-width: 1000px; margin: 0 auto; padding: 48px 20px; }
+        .hero, .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 28px;
+            backdrop-filter: blur(12px);
+            margin-bottom: 20px;
+        }
+        h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.5rem); }
+        h2 { margin-top: 0; }
+        p { color: var(--muted); line-height: 1.7; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .metric {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+        }
+        .metric strong { display: block; font-size: 2rem; margin-top: 6px; }
+        label { color: var(--muted); }
+        input {
+            width: 100%;
+            margin-top: 8px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #11182b;
+            color: var(--text);
+        }
+        button {
+            margin-top: 16px;
+            padding: 12px 18px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--accent);
+            color: #06111c;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
+        a { color: var(--accent); }
+        .flow { font-weight: 700; color: var(--text); }
+        footer { text-align: center; color: var(--muted); margin-top: 28px; }
+    </style>
+</head>
+<body>
+<main>
+    <section class="hero">
+        <h1>Federated Learning Simulation</h1>
+        <p>
+            A lightweight demonstration of distributed model training where
+            client datasets stay local and only model parameters are aggregated.
+        </p>
+        <p class="flow">Client training → model updates → FedAvg → global model</p>
+    </section>
+
+    <section class="card">
+        <h2>Run a simulation</h2>
+        <form method="get">
+            <div class="grid">
+                <div>
+                    <label for="clients">Clients (2–8)</label>
+                    <input id="clients" name="clients" type="number" min="2" max="8" value="{{ clients }}">
+                </div>
+                <div>
+                    <label for="rounds">Communication rounds (1–12)</label>
+                    <input id="rounds" name="rounds" type="number" min="1" max="12" value="{{ rounds }}">
+                </div>
+            </div>
+            <button type="submit">Run Federated Training</button>
+        </form>
+    </section>
+
+    <section class="grid">
+        <div class="metric">
+            <span>Simulated clients</span>
+            <strong>{{ clients }}</strong>
+        </div>
+        <div class="metric">
+            <span>Communication rounds</span>
+            <strong>{{ rounds }}</strong>
+        </div>
+        <div class="metric">
+            <span>Final global accuracy</span>
+            <strong>{{ final_accuracy|floatformat:2 }}</strong>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Round results</h2>
+        <table>
+            <thead>
+                <tr><th>Round</th><th>Global accuracy</th></tr>
+            </thead>
+            <tbody>
+            {% for item in history %}
+                <tr>
+                    <td>{{ item.round }}</td>
+                    <td>{{ item.accuracy|floatformat:4 }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>Privacy boundary</h2>
+        <p>
+            The demonstration keeps each client's raw records inside its local
+            partition. The coordinator receives model parameters and sample
+            counts for weighted aggregation. A production system would also
+            need secure aggregation, authentication, transport security and
+            potentially differential privacy.
+        </p>
+    </section>
+
+    <footer>
+        Built by Praveen Kumar ·
+        <a href="{{ github }}" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="{{ linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+    </footer>
+</main>
+</body>
+</html>
