@@ -1,0 +1,3 @@
+# Optional privacy/data-governance extension.
+# PySyft has a broader dependency footprint than the lightweight simulation.
+syft>=0.9,<1.0
